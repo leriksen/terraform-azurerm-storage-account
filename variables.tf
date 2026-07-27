@@ -35,8 +35,19 @@ variable "account_kind" {
   description = "Defines the Kind of account. Valid options are BlobStorage, BlockBlobStorage, FileStorage, Storage and StorageV2."
 
   validation {
-    condition     = !try(var.blob_properties.change_feed_enabled, false) || contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
+    condition     = !var.blob_properties.change_feed_enabled || contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
     error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true."
+  }
+}
+
+variable "account_tier" {
+  type        = string
+  default     = "Standard"
+  description = "Defines the Tier to use for this storage account. Valid options are Standard and Premium."
+
+  validation {
+    condition     = contains(["Premium", "Standard"], var.account_tier)
+    error_message = "account_tier must be Premium or Standard."
   }
 }
 

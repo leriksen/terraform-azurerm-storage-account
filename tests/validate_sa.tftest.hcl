@@ -65,6 +65,11 @@ run "storage_account_with_blob_properties" {
     condition     = azurerm_storage_account.this.blob_properties[0].container_delete_retention_policy[0].days == 7
     error_message = "Blob properties container_delete_retention_policy days should default to 7."
   }
+
+  assert {
+    condition     = azurerm_storage_account.this.account_tier == "Standard"
+    error_message = "account_tier should default to Standard."
+  }
 }
 
 run "storage_account_without_blob_properties" {
