@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "this" {
   name                            = "${var.resource_group_name}dl${var.sequence_no}"
   resource_group_name             = var.resource_group_name
   location                        = var.location
-  account_kind                    = "StorageV2"
+  account_kind                    = var.account_kind
   account_tier                    = "Standard"
   account_replication_type        = "LRS"
   is_hns_enabled                  = true
@@ -30,6 +30,26 @@ resource "azurerm_storage_account" "this" {
   identity {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.this.id]
+  }
+
+  blob_properties {
+    versioning_enabled            = var.blob_properties.versioning_enabled
+    change_feed_enabled           = var.blob_properties.change_feed_enabled
+    change_feed_retention_in_days = var.blob_properties.change_feed_retention_days
+
+    dynamic "container_delete_retention_policy" {
+      for_each = var.blob_properties.container_delete_retention_policy != null ? [var.blob_properties.container_delete_retention_policy] : []
+      content {
+        days = container_delete_retention_policy.value.days
+      }
+    }
+
+    dynamic "delete_retention_policy" {
+      for_each = var.blob_properties.delete_retention_policy != null ? [var.blob_properties.delete_retention_policy] : []
+      content {
+        days = delete_retention_policy.value.days
+      }
+    }
   }
 
   tags = var.tags

@@ -1,5 +1,6 @@
 provider "azurerm" {
   features {}
+  storage_use_azuread = true
 }
 
 variables {
@@ -18,7 +19,7 @@ run "setup_rg" {
   }
 }
 
-run "storage_account" {
+run "storage_account_with_blob_properties" {
   module {
     source = "./.."
   }
@@ -28,7 +29,11 @@ run "storage_account" {
     resource_group_name = run.setup_rg.name
     location            = var.location
     sequence_no         = "01"
-    tags                = { env = "tftest" }
+    blob_properties = {
+      change_feed_enabled        = true
+      change_feed_retention_days = 7
+    }
+    tags = { env = "tftest" }
   }
 
   assert {
@@ -44,5 +49,54 @@ run "storage_account" {
   assert {
     condition     = output.umi_principal_id != ""
     error_message = "UMI principal id should be set."
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.blob_properties[0].change_feed_enabled == true
+    error_message = "Blob properties change_feed_enabled should be true."
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.blob_properties[0].delete_retention_policy[0].days == 7
+    error_message = "Blob properties delete_retention_policy days should default to 7."
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.blob_properties[0].container_delete_retention_policy[0].days == 7
+    error_message = "Blob properties container_delete_retention_policy days should default to 7."
+  }
+}
+
+run "storage_account_without_blob_properties" {
+  module {
+    source = "./.."
+  }
+  command = apply
+
+  variables {
+    resource_group_name = run.setup_rg.name
+    location            = var.location
+    sequence_no         = "02"
+    tags                = { env = "tftest" }
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.name == "tftestsadl02"
+    error_message = "Storage account name should be <resource_group_name>dl<sequence_no>."
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.is_hns_enabled == true
+    error_message = "Storage account must have HNS (ADLS Gen2) enabled."
+  }
+
+  assert {
+    condition     = output.umi_principal_id != ""
+    error_message = "UMI principal id should be set."
+  }
+
+  assert {
+    condition     = azurerm_storage_account.this.blob_properties[0].change_feed_enabled == false
+    error_message = "Blob properties change_feed_enabled should be false."
   }
 }

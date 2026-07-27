@@ -28,3 +28,58 @@ variable "sftp_enabled" {
   default     = false
   description = "Enable SFTP and local users on the storage account."
 }
+
+variable "account_kind" {
+  type        = string
+  default     = "StorageV2"
+  description = "Defines the Kind of account. Valid options are BlobStorage, BlockBlobStorage, FileStorage, Storage and StorageV2."
+
+  validation {
+    condition     = !try(var.blob_properties.change_feed_enabled, false) || contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
+    error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true."
+  }
+}
+
+variable "blob_properties" {
+  type = object(
+    {
+      versioning_enabled         = optional(bool, false)
+      change_feed_enabled        = optional(bool, false)
+      change_feed_retention_days = optional(number, null)
+      container_delete_retention_policy = optional(
+        object(
+          {
+            days = number
+          }
+        ),
+        {
+          days = 7
+        }
+      )
+      delete_retention_policy = optional(
+        object(
+          {
+            days = number
+          }
+        ),
+        {
+          days = 7
+        }
+      )
+      cors_rule = optional(
+        object(
+          {
+            allowed_origins    = list(string)
+            allowed_methods    = list(string)
+            allowed_headers    = list(string)
+            exposed_headers    = list(string)
+            max_age_in_seconds = number
+          }
+        ),
+        null
+      )
+    }
+  )
+  default  = {}
+  nullable = false
+}
