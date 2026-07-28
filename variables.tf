@@ -35,8 +35,13 @@ variable "account_kind" {
   description = "Defines the Kind of account. Valid options are BlobStorage, BlockBlobStorage, FileStorage, Storage and StorageV2."
 
   validation {
-    condition     = !var.blob_properties.change_feed_enabled || contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
-    error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true."
+    condition     = anytrue(
+      [
+        var.blob_properties.change_feed_enabled == false && contains(["StorageV2", "BlobStorage", "BlockBlobStorage", "Storage", "FileStorage"], var.account_kind),
+        var.blob_properties.change_feed_enabled == true  && contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
+      ]
+    )
+    error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true, or one of those or Storage or FileStorage if false."
   }
 }
 
