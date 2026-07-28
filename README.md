@@ -1,7 +1,9 @@
 # terraform-azurerm-storage-account
 
-Terraform module for an ADLS Gen2 (HNS-enabled) `StorageV2` account with a
+Terraform module for an Azure Storage Account with a
 dedicated user-assigned managed identity.
+
+Will support customer-managed keys (CMK) in the future, but currently uses platform-managed keys.
 
 The account is created hardened by default: shared access keys disabled, OAuth
 default authentication, no public nested items, LRS replication. SFTP and local
