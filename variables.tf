@@ -38,7 +38,7 @@ variable "sftp_enabled" {
 variable "account_kind" {
   type        = string
   default     = "StorageV2"
-  description = "Defines the Kind of account. Valid options are BlobStorage, BlockBlobStorage, FileStorage, Storage and StorageV2."
+  description = "Defines the Kind of account. Valid options are BlobStorage, BlockBlobStorage, FileStorage and StorageV2."
 
   validation {
     condition     = anytrue(
@@ -47,7 +47,7 @@ variable "account_kind" {
         var.blob_properties.change_feed_enabled == true  && contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
       ]
     )
-    error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true, or one of those or Storage or FileStorage if false."
+    error_message = "account_kind must be one of StorageV2, BlobStorage, or BlockBlobStorage when blob_properties.change_feed_enabled is true, or one of those or FileStorage if false."
   }
 }
 
