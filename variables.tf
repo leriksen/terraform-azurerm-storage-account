@@ -17,6 +17,12 @@ variable "location" {
 
 # ── Optional ────────────────────────────────────────────────────────────────
 
+variable "is_hns_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable hierarchical namespace (HNS) for the storage account (required for ADLS Gen2)."
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

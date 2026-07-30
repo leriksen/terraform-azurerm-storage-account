@@ -20,7 +20,7 @@ resource "azurerm_storage_account" "this" {
   account_kind                    = var.account_kind
   account_tier                    = var.account_tier
   account_replication_type        = "LRS"
-  is_hns_enabled                  = true
+  is_hns_enabled                  = var.is_hns_enabled
   sftp_enabled                    = var.sftp_enabled
   local_user_enabled              = var.sftp_enabled
   allow_nested_items_to_be_public = false
