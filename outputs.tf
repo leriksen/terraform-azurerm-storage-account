@@ -14,9 +14,11 @@ output "umi_principal_id" {
 }
 
 output "blob_properties" {
-  value = azurerm_storage_account.this.blob_properties
+  value       = azurerm_storage_account.this.blob_properties
+  description = "The blob_properties block as applied on the storage account."
 }
 
 output "change_feed_enabled" {
-  value = try(azurerm_storage_account.this.blob_properties[0].change_feed_enabled, null)
+  value       = try(azurerm_storage_account.this.blob_properties[0].change_feed_enabled, null)
+  description = "Whether change feed is enabled on the storage account."
 }

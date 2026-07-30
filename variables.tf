@@ -96,6 +96,7 @@ variable "blob_properties" {
       )
     }
   )
-  default  = {}
-  nullable = false
+  default     = {}
+  nullable    = false
+  description = "Blob service properties: versioning, change feed, container/blob soft-delete retention, and CORS."
 }

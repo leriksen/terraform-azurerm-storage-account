@@ -50,6 +50,9 @@ module "storage_account" {
 | location | Azure region | `string` | — | yes |
 | tags | Tags to apply | `map(string)` | `{}` | no |
 | sftp\_enabled | Enable SFTP and local users | `bool` | `false` | no |
+| account\_kind | Kind of storage account. One of `BlobStorage`, `BlockBlobStorage`, `FileStorage`, `Storage`, `StorageV2`. Must be `StorageV2`, `BlobStorage`, or `BlockBlobStorage` if `blob_properties.change_feed_enabled` is `true` | `string` | `"StorageV2"` | no |
+| account\_tier | Tier of the storage account. One of `Standard`, `Premium` | `string` | `"Standard"` | no |
+| blob\_properties | Blob service properties: versioning, change feed, container/blob soft-delete retention, and CORS. See `variables.tf` for the full object shape | <pre>object({<br>  versioning_enabled                = optional(bool, false)<br>  change_feed_enabled               = optional(bool, false)<br>  change_feed_retention_days        = optional(number, null)<br>  container_delete_retention_policy = optional(object({ days = number }), { days = 7 })<br>  delete_retention_policy           = optional(object({ days = number }), { days = 7 })<br>  cors_rule = optional(object({<br>    allowed_origins    = list(string)<br>    allowed_methods    = list(string)<br>    allowed_headers    = list(string)<br>    exposed_headers    = list(string)<br>    max_age_in_seconds = number<br>  }), null)<br>})</pre> | `{}` | no |
 
 ## Outputs
 
@@ -58,6 +61,8 @@ module "storage_account" {
 | id | Resource ID of the storage account |
 | umi\_id | Resource ID of the user-assigned managed identity |
 | umi\_principal\_id | Principal ID of the user-assigned managed identity |
+| blob\_properties | The blob\_properties block as applied on the storage account |
+| change\_feed\_enabled | Whether change feed is enabled on the storage account |
 
 ## Testing
 
