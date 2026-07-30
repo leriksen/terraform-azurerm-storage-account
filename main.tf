@@ -32,22 +32,25 @@ resource "azurerm_storage_account" "this" {
     identity_ids = [azurerm_user_assigned_identity.this.id]
   }
 
-  blob_properties {
-    versioning_enabled            = var.blob_properties.versioning_enabled
-    change_feed_enabled           = var.blob_properties.change_feed_enabled
-    change_feed_retention_in_days = var.blob_properties.change_feed_retention_days
+  dynamic "blob_properties" {
+    for_each = var.account_kind != "FileStorage" ? [1] : []
+    content {
+      versioning_enabled            = var.blob_properties.versioning_enabled
+      change_feed_enabled           = var.blob_properties.change_feed_enabled
+      change_feed_retention_in_days = var.blob_properties.change_feed_retention_days
 
-    dynamic "container_delete_retention_policy" {
-      for_each = var.blob_properties.container_delete_retention_policy != null ? [var.blob_properties.container_delete_retention_policy] : []
-      content {
-        days = container_delete_retention_policy.value.days
+      dynamic "container_delete_retention_policy" {
+        for_each = var.blob_properties.container_delete_retention_policy != null ? [var.blob_properties.container_delete_retention_policy] : []
+        content {
+          days = container_delete_retention_policy.value.days
+        }
       }
-    }
 
-    dynamic "delete_retention_policy" {
-      for_each = var.blob_properties.delete_retention_policy != null ? [var.blob_properties.delete_retention_policy] : []
-      content {
-        days = delete_retention_policy.value.days
+      dynamic "delete_retention_policy" {
+        for_each = var.blob_properties.delete_retention_policy != null ? [var.blob_properties.delete_retention_policy] : []
+        content {
+          days = delete_retention_policy.value.days
+        }
       }
     }
   }

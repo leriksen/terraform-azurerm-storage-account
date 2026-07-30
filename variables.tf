@@ -43,7 +43,7 @@ variable "account_kind" {
   validation {
     condition     = anytrue(
       [
-        var.blob_properties.change_feed_enabled == false && contains(["StorageV2", "BlobStorage", "BlockBlobStorage", "Storage", "FileStorage"], var.account_kind),
+        var.blob_properties.change_feed_enabled == false && contains(["StorageV2", "BlobStorage", "BlockBlobStorage", "FileStorage"], var.account_kind),
         var.blob_properties.change_feed_enabled == true  && contains(["StorageV2", "BlobStorage", "BlockBlobStorage"], var.account_kind)
       ]
     )
