@@ -5,7 +5,7 @@
     "legacy_tag_formats": [
       "$version"
     ],
-    "version": "0.5.2",
+    "version": "0.6.0",
     "version_scheme": "semver"
   }
 }
