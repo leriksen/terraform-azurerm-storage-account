@@ -23,9 +23,12 @@ variable "is_hns_enabled" {
   description = "Enable hierarchical namespace (HNS) for the storage account (required for ADLS Gen2). Azure only supports HNS on Standard StorageV2 and Premium BlockBlobStorage accounts."
 
   validation {
-    condition = !var.is_hns_enabled || (
-      (var.account_tier == "Standard" && var.account_kind == "StorageV2") ||
-      (var.account_tier == "Premium" && var.account_kind == "BlockBlobStorage")
+    condition = anytrue(
+      [
+        var.is_hns_enabled == false,
+        var.account_tier == "Standard" && var.account_kind == "StorageV2",
+        var.account_tier == "Premium" && var.account_kind == "BlockBlobStorage"
+      ]
     )
     error_message = "is_hns_enabled requires account_tier Standard with account_kind StorageV2, or account_tier Premium with account_kind BlockBlobStorage — other combinations fail during Azure provisioning and leave the account tainted."
   }
@@ -33,7 +36,7 @@ variable "is_hns_enabled" {
   # This check lives here rather than on blob_properties to avoid a validation
   # dependency cycle (account_kind's validation already references blob_properties).
   validation {
-    condition     = !(var.is_hns_enabled && var.blob_properties.versioning_enabled)
+    condition     = var.is_hns_enabled == false || var.blob_properties.versioning_enabled == false
     error_message = "is_hns_enabled cannot be true when blob_properties.versioning_enabled is true — Azure does not support blob versioning on HNS accounts."
   }
 }
@@ -66,10 +69,12 @@ variable "account_kind" {
   }
 
   validation {
-    condition = (
-      var.account_kind == "StorageV2" ||
-      (var.account_kind == "BlobStorage" && var.account_tier == "Standard") ||
-      (contains(["BlockBlobStorage", "FileStorage"], var.account_kind) && var.account_tier == "Premium")
+    condition = anytrue(
+      [
+        var.account_kind == "StorageV2",
+        var.account_kind == "BlobStorage" && var.account_tier == "Standard",
+        (contains(["BlockBlobStorage", "FileStorage"], var.account_kind) && var.account_tier == "Premium")
+      ]
     )
     error_message = "account_tier must be Premium when account_kind is BlockBlobStorage or FileStorage, and Standard when account_kind is BlobStorage."
   }
