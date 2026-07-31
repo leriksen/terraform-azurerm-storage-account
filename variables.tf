@@ -26,11 +26,11 @@ variable "is_hns_enabled" {
     condition = anytrue(
       [
         var.is_hns_enabled == false,
-        var.account_tier == "Standard" && var.account_kind == "StorageV2",
-        var.account_tier == "Premium" && var.account_kind == "BlockBlobStorage"
+        var.tier == "Standard" && var.account_kind == "StorageV2",
+        var.tier == "Premium" && var.account_kind == "BlockBlobStorage"
       ]
     )
-    error_message = "is_hns_enabled requires account_tier Standard with account_kind StorageV2, or account_tier Premium with account_kind BlockBlobStorage — other combinations fail during Azure provisioning and leave the account tainted."
+    error_message = "is_hns_enabled requires tier Standard with account_kind StorageV2, or tier Premium with account_kind BlockBlobStorage — other combinations fail during Azure provisioning and leave the account tainted."
   }
 
   # This check lives here rather than on blob_properties to avoid a validation
@@ -72,22 +72,22 @@ variable "account_kind" {
     condition = anytrue(
       [
         var.account_kind == "StorageV2",
-        var.account_kind == "BlobStorage" && var.account_tier == "Standard",
-        (contains(["BlockBlobStorage", "FileStorage"], var.account_kind) && var.account_tier == "Premium")
+        var.account_kind == "BlobStorage" && var.tier == "Standard",
+        (contains(["BlockBlobStorage", "FileStorage"], var.account_kind) && var.tier == "Premium")
       ]
     )
-    error_message = "account_tier must be Premium when account_kind is BlockBlobStorage or FileStorage, and Standard when account_kind is BlobStorage."
+    error_message = "tier must be Premium when account_kind is BlockBlobStorage or FileStorage, and Standard when account_kind is BlobStorage."
   }
 }
 
-variable "account_tier" {
+variable "tier" {
   type        = string
   default     = "Standard"
   description = "Defines the Tier to use for this storage account. Valid options are Standard and Premium."
 
   validation {
-    condition     = contains(["Premium", "Standard"], var.account_tier)
-    error_message = "account_tier must be Premium or Standard."
+    condition     = contains(["Premium", "Standard"], var.tier)
+    error_message = "tier must be Premium or Standard."
   }
 }
 

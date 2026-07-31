@@ -23,7 +23,7 @@ run "premium_storagev2_hns_rejected" {
   command = plan
 
   variables {
-    account_tier = "Premium"
+    tier = "Premium"
   }
 
   expect_failures = [var.is_hns_enabled]
@@ -37,7 +37,7 @@ run "filestorage_hns_rejected" {
 
   variables {
     account_kind = "FileStorage"
-    account_tier = "Premium"
+    tier         = "Premium"
   }
 
   expect_failures = [var.is_hns_enabled]
@@ -79,7 +79,7 @@ run "premium_blobstorage_rejected" {
 
   variables {
     account_kind   = "BlobStorage"
-    account_tier   = "Premium"
+    tier           = "Premium"
     is_hns_enabled = false
   }
 
@@ -94,7 +94,7 @@ run "filestorage_change_feed_rejected" {
 
   variables {
     account_kind   = "FileStorage"
-    account_tier   = "Premium"
+    tier           = "Premium"
     is_hns_enabled = false
     blob_properties = {
       change_feed_enabled = true

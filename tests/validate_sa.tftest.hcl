@@ -68,7 +68,7 @@ run "storage_account_with_blob_properties" {
 
   assert {
     condition     = azurerm_storage_account.this.account_tier == "Standard"
-    error_message = "account_tier should default to Standard."
+    error_message = "tier should default to Standard."
   }
 }
 
@@ -117,7 +117,7 @@ run "storage_account_file_storage_skips_blob_properties" {
     location            = var.location
     sequence_no         = "03"
     account_kind        = "FileStorage"
-    account_tier        = "Premium"
+    tier                = "Premium"
     is_hns_enabled      = false
     blob_properties = {
       versioning_enabled                = true

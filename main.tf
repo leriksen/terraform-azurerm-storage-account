@@ -18,7 +18,7 @@ resource "azurerm_storage_account" "this" {
   resource_group_name             = var.resource_group_name
   location                        = var.location
   account_kind                    = var.account_kind
-  account_tier                    = var.account_tier
+  account_tier                    = var.tier
   account_replication_type        = "LRS"
   is_hns_enabled                  = var.is_hns_enabled
   sftp_enabled                    = var.sftp_enabled
