@@ -34,7 +34,7 @@ variable "is_hns_enabled" {
   # dependency cycle (account_kind's validation already references blob_properties).
   validation {
     condition     = !(var.is_hns_enabled && var.blob_properties.versioning_enabled)
-    error_message = "is_hns_enabled cannot be true when blob_properties.versioning_enabled is true — Azure rejects blob versioning on HNS accounts after the account is created, leaving it tainted."
+    error_message = "is_hns_enabled cannot be true when blob_properties.versioning_enabled is true — Azure does not support blob versioning on HNS accounts."
   }
 }
 
